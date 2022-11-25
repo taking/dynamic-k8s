@@ -1,0 +1,34 @@
+#!/bin/bash
+# sed -i 's/kube_version: v1.24.6/kube_version: v1.22.9/' /kubespray/roles/kubespray-defaults/defaults/main.yaml
+# cat /kubespray/roles/kubespray-defaults/defaults/main.yaml | grep kube_version
+
+cat <<EOF > /kubespray/roles/kubernetes/node/vars/ubuntu-18.yml
+---
+kube_resolv_conf: "/etc/resolv.conf"
+EOF
+cat /kubespray/roles/kubernetes/node/vars/ubuntu-18.yml
+
+cat <<EOF > /kubespray/roles/kubernetes/node/vars/ubuntu-20.yml
+---
+kube_resolv_conf: "/etc/resolv.conf"
+EOF
+cat /kubespray/roles/kubernetes/node/vars/ubuntu-20.yml
+
+cat <<EOF >> /inventory/group_vars/all/containerd.yml
+
+containerd_registries:
+  "docker.io": "https://registry-1.docker.io"
+
+containerd_registry_auth:
+  - registry: registry-1.docker.io
+    username: dockerUserId
+    password: dockerUserPw
+EOF
+
+sed -i '/curl/a \ \ - conntrack' /kubespray/roles/kubernetes/preinstall/defaults/main.yml
+sed -i '/curl/a \ \ - sshpass' /kubespray/roles/kubernetes/preinstall/defaults/main.yml
+
+# sed -i 's/override_system_hostname: true/override_system_hostname: false/' /kubespray/roles/bootstrap-os/defaults/main.yml
+# cat /kubespray/roles/bootstrap-os/defaults/main.yml | grep override_system_hostname
+
+ansible-playbook -i /inventory/inventory.ini  --become --become-user=root /kubespray/cluster.yml

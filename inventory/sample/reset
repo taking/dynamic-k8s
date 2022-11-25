@@ -1,0 +1,2 @@
+#!/bin/bash
+ansible-playbook -i /inventory/inventory.ini  --become --become-user=root /kubespray/reset.yml
