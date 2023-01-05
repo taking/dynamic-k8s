@@ -17,7 +17,10 @@ cat /kubespray/roles/kubernetes/node/vars/ubuntu-20.yml
 cat <<EOF >> /inventory/group_vars/all/containerd.yml
 
 containerd_registries:
-  "docker.io": "https://registry-1.docker.io"
+  "docker.io":
+    - "https://mirror.gcr.io"
+    - "https://mirror.innogrid.cf"
+    - "https://registry-1.docker.io"
 
 containerd_registry_auth:
   - registry: registry-1.docker.io
